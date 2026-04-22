@@ -18,6 +18,7 @@ import {
 } from "../services/api-client";
 import { CreateWorldBackground } from "./CreateWorldBackground";
 import { LanguageToggle } from "../components/LanguageToggle";
+import { sortLibraryWorldsForLocale } from "../utils/library-world-sort";
 
 type Mode = "input" | "running" | "done" | "error";
 
@@ -33,7 +34,7 @@ export function CreateWorldPage({
 }: {
   hasExistingWorlds: boolean;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const keepArtifacts = useMemo(() => {
     if (typeof window === "undefined") return false;
     return new URLSearchParams(window.location.search).get("dev") === "1";
@@ -52,6 +53,15 @@ export function CreateWorldPage({
   const [libraryWorlds, setLibraryWorlds] = useState<GeneratedWorldSummary[]>([]);
   const [loadingSampleWorld, setLoadingSampleWorld] = useState<string | null>(null);
   const logBoxRef = useRef<HTMLDivElement | null>(null);
+
+  const sortedLibraryWorlds = useMemo(
+    () =>
+      sortLibraryWorldsForLocale(
+        libraryWorlds,
+        i18n.resolvedLanguage || i18n.language || "en",
+      ),
+    [libraryWorlds, i18n.resolvedLanguage, i18n.language],
+  );
 
   useEffect(() => {
     if (hasExistingWorlds) return;
@@ -242,7 +252,7 @@ export function CreateWorldPage({
             conflictJobId={conflictJobId}
             onSubmit={onSubmit}
             onAttachToConflict={onAttachToConflict}
-            libraryWorlds={libraryWorlds}
+            libraryWorlds={sortedLibraryWorlds}
             loadingSampleWorld={loadingSampleWorld}
             onLoadSampleWorld={onLoadSampleWorld}
           />

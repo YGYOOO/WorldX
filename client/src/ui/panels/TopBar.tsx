@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import type { CSSProperties, ChangeEvent } from "react";
 import { createPortal } from "react-dom";
@@ -11,6 +11,7 @@ import { SandboxChatPanel } from "./SandboxChatPanel";
 import { TimelineManagerModal } from "./TimelineManagerModal";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { translatePeriod } from "../utils/time-i18n";
+import { sortLibraryWorldsForLocale } from "../utils/library-world-sort";
 
 type ViewMode = "run" | "replay";
 
@@ -57,7 +58,7 @@ export function TopBar({
   replayProgress: { current: number; total: number } | null;
   onHeightChange?: (height: number) => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [availableWorlds, setAvailableWorlds] = useState<GeneratedWorldSummary[]>([]);
   const [libraryWorlds, setLibraryWorlds] = useState<GeneratedWorldSummary[]>([]);
@@ -93,16 +94,18 @@ export function TopBar({
 
   useEffect(() => {
     let cancelled = false;
+    const lang = i18n.resolvedLanguage || i18n.language || "en";
     apiClient.getGeneratedWorlds()
       .then((response) => {
         if (cancelled) return;
         setAvailableWorlds(response.worlds);
         setLibraryWorlds(response.libraryWorlds ?? []);
-        const allWorlds = [...response.worlds, ...(response.libraryWorlds ?? [])];
+        const sortedLib = sortLibraryWorldsForLocale(response.libraryWorlds ?? [], lang);
+        const merged = [...response.worlds, ...sortedLib];
         const defaultWorldId =
           response.currentWorldId ||
-          allWorlds.find((world) => world.isCurrent)?.id ||
-          allWorlds[0]?.id ||
+          merged.find((world) => world.isCurrent)?.id ||
+          merged[0]?.id ||
           "";
         if (defaultWorldId) setSelectedWorldId(defaultWorldId);
       })
@@ -117,7 +120,7 @@ export function TopBar({
       .catch(() => {});
 
     return () => { cancelled = true; };
-  }, []);
+  }, [i18n.resolvedLanguage, i18n.language]);
 
   useEffect(() => {
     if (worldInfo?.currentWorldId) setSelectedWorldId(worldInfo.currentWorldId);
@@ -246,7 +249,15 @@ export function TopBar({
     }
   };
 
-  const allWorlds = [...availableWorlds, ...libraryWorlds];
+  const sortedLibraryWorlds = useMemo(
+    () =>
+      sortLibraryWorldsForLocale(
+        libraryWorlds,
+        i18n.resolvedLanguage || i18n.language || "en",
+      ),
+    [libraryWorlds, i18n.resolvedLanguage, i18n.language],
+  );
+  const allWorlds = [...availableWorlds, ...sortedLibraryWorlds];
 
   const handleWorldChange = async (event: ChangeEvent<HTMLSelectElement>) => {
     const nextWorldId = event.target.value;
@@ -391,9 +402,9 @@ export function TopBar({
                     ))}
                   </optgroup>
                 )}
-                {libraryWorlds.length > 0 && (
+                {sortedLibraryWorlds.length > 0 && (
                   <optgroup label={t("topbar.sampleWorlds")}>
-                    {libraryWorlds.map((world) => (
+                    {sortedLibraryWorlds.map((world) => (
                       <option key={world.id} value={world.id}>{world.worldName}</option>
                     ))}
                   </optgroup>

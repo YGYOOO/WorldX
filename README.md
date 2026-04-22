@@ -57,7 +57,7 @@ git clone https://github.com/YGYOOO/WorldX.git
 cd WorldX
 cp .env.example .env
 # 编辑 .env —— 只填 SIMULATION_* 三行即可
-npm install && cd client && npm install && cd ../server && npm install && cd ..
+npm install
 npm run dev
 ```
 

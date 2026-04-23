@@ -1,3 +1,5 @@
+.cursor/
+
 node_modules/
 dist/
 *.db

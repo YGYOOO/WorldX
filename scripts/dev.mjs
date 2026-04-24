@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
+const NPM_CMD = process.platform === "win32" ? "npm.cmd" : "npm";
 
 const procs = [];
 let shuttingDown = false;
@@ -40,8 +41,8 @@ function run(name, cmd, args, cwd) {
   procs.push({ name, proc });
 }
 
-run("server", "npm", ["run", "dev"], join(ROOT, "server"));
-run("client", "npm", ["run", "dev"], join(ROOT, "client"));
+run("server", NPM_CMD, ["run", "dev"], join(ROOT, "server"));
+run("client", NPM_CMD, ["run", "dev"], join(ROOT, "client"));
 
 process.on("SIGINT", () => {
   void shutdown(0);

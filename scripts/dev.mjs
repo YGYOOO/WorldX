@@ -4,7 +4,8 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
-const NPM_CMD = process.platform === "win32" ? "npm.cmd" : "npm";
+const IS_WINDOWS = process.platform === "win32";
+const NPM_CMD = IS_WINDOWS ? "npm.cmd" : "npm";
 
 const procs = [];
 let shuttingDown = false;
@@ -13,8 +14,8 @@ function run(name, cmd, args, cwd) {
   const proc = spawn(cmd, args, {
     cwd,
     stdio: ["ignore", "pipe", "pipe"],
-    shell: false,
-    detached: process.platform !== "win32",
+    shell: IS_WINDOWS,
+    detached: !IS_WINDOWS,
   });
   proc.stdout.on("data", (d) =>
     d
@@ -34,6 +35,12 @@ function run(name, cmd, args, cwd) {
     console.log(
       `[${name}] exited (${signal ? `signal ${signal}` : code ?? "unknown"})`,
     );
+    if (!shuttingDown) {
+      void shutdown(1);
+    }
+  });
+  proc.on("error", (err) => {
+    console.error(`[${name}] failed to start: ${err.message}`);
     if (!shuttingDown) {
       void shutdown(1);
     }
@@ -75,7 +82,7 @@ function terminateProcess(proc, signal) {
   if (proc.exitCode != null) return;
 
   try {
-    if (process.platform !== "win32" && proc.pid) {
+    if (!IS_WINDOWS && proc.pid) {
       process.kill(-proc.pid, signal);
       return;
     }

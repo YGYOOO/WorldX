@@ -210,6 +210,7 @@ SIMULATION_MODEL=deepseek-chat
 
 ## 架构  
 <img src="docs/chart1.png"/>
+<img src="docs/chart2.png"/>
 
 ## 详细技术介绍
 https://zhuanlan.zhihu.com/p/2032410449854068566

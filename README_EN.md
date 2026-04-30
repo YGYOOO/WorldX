@@ -195,6 +195,7 @@ SIMULATION_MODEL=deepseek-chat
 
 ## Architecture
 <img src="docs/chart1_en.png"/>
+<img src="docs/chart2_en.png"/>
 
 ## Project Structure
 

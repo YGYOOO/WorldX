@@ -208,6 +208,34 @@ SIMULATION_MODEL=deepseek-chat
 
 </details>
 
+### 代理问题
+
+注意：**建议在你的代理软件中开启 TUN / 虚拟网卡 / 全局透明代理模式**，开启后 Node.js 请求通常会自动走代理，一般可避免此类问题。
+
+
+
+如果浏览器可以访问 OpenRouter / Google AI Studio，但运行 `npm run dev` 或创建世界时报 `This model is not available in your region`、`fetch failed`、`ETIMEDOUT`，通常是因为**浏览器走了代理，但 Node.js 进程没有走代理**。
+
+
+若代理软件不支持TUN/虚拟网卡/全局透明代理模式，可先查看本机代理端口：
+
+```bash
+scutil --proxy
+```
+
+找到 `HTTPPort` / `HTTPSPort` 所示的端口号后，在启动项目前设置代理：
+
+```bash
+# 注意把下面的端口号替换成HTTPPort/HTTPSPort所示的端口号
+export HTTP_PROXY=http://127.0.0.1:7890
+export HTTPS_PROXY=http://127.0.0.1:7890
+export ALL_PROXY=socks5://127.0.0.1:7890
+
+npm run dev
+```
+
+
+
 ## 架构  
 <img src="docs/chart1.png"/>
 <img src="docs/chart2.png"/>

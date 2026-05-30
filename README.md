@@ -298,3 +298,48 @@ npm run create       # 通过命令行直接生成新世界
 ## License
 MIT
 
+
+## FAQ (常见问题)
+
+### What is WorldX?
+
+WorldX is an AI-driven world simulator. With one sentence, it generates a complete virtual world where AI characters autonomously live - making decisions, interacting, building relationships, having conversations, remembering and thinking. Stories emerge that no one wrote.
+
+### What can I create with WorldX?
+
+| Feature | Description |
+|---------|-------------|
+| **One-sentence world** | Describe any scene, watch it materialize |
+| **AI-generated characters** | Characters fully generated to your specs |
+| **Autonomous agents** | Characters make decisions, build relationships |
+| **Memory & personality** | Characters remember past events, form behaviors |
+| **Day evolution** | World evolves through day-night cycles |
+| **God mode** | Inject events, edit characters, start conversations |
+| **Timeline system** | One world can have multiple timelines |
+| **Multi-language** | Chinese & English support |
+
+### How do I get started?
+
+Prerequisites: Node.js 18+, LLM API Key
+
+Quick Start: Run with built-in sample worlds or create your own from scratch.
+
+### What is God Mode?
+
+As creator, you can inject events, edit character memories/personalities, start conversations with any character, and watch how your interventions change the world.
+
+### What languages are supported?
+
+WorldX supports both Chinese (中文) and English interfaces.
+
+### What is the project status?
+
+WorldX is in Alpha stage - core features functional, actively developing.
+
+### What license does WorldX use?
+
+MIT License - free for commercial and personal use.
+
+### Where can I get help?
+
+Demo video on Bilibili, README documentation, and GitHub issues.

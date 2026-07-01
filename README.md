@@ -130,7 +130,7 @@ WorldX 使用 **4 个模型角色**，各自独立配置。除绘图模型支持
 绘图模型可额外设置 `IMAGE_GEN_PROVIDER`，`IMAGE_GEN_PROVIDER` 可选 `openai-compatible`（默认，适合 OpenRouter）或 `google-native`（适合 Google AI Studio 图片生成）。
 
 ### 平台配置示例
-
+图像生成模型建议使用nano banana2（gemini-3.1-flash-image），gpt-image-2在指令遵循上依然有欠缺（虽然画风显著比nb2好看），在本项目中容易导致各类问题、影响最终效果
 <details>
 <summary><strong>OpenRouter</strong>（一个 Key 搞定全部模型）</summary>
 

@@ -1,4 +1,5 @@
 .cursor/
+.agentpond/
 
 node_modules/
 dist/

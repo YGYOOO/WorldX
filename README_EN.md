@@ -327,6 +327,24 @@ npm run create       # Generate a new world via CLI
 - Client: `http://localhost:3200`
 - Server: `http://localhost:3100`
 
+### Optional AgentPond tracing
+
+The trusted server can export LLM-call metadata from the world simulation to
+[AgentPond](https://github.com/marcusschiesser/agentpond). Tracing is disabled
+by default and does not record prompts, responses, API keys, or tool payloads.
+
+Use the Files SDK filesystem store for local verification:
+
+```bash
+npx agentpond env init local --provider fs --root "$PWD/.agentpond/envs/local/objects"
+npx agentpond env use local
+eval "$(npx agentpond env get local)"
+AGENTPOND_ENABLED=true npm run dev
+```
+
+After running a simulation, inspect traces with `npx agentpond sync` and
+`npx agentpond traces list --limit 10`. For production, configure a persistent
+object store from the [Files SDK provider catalog](https://files-sdk.dev/docs/providers).
 
 ## Thanks
 -  [LinuxDO](https://linux.do/)

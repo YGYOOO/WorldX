@@ -6,13 +6,20 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "test:agentpond-e2e": "npm run build && node --test test/agentpond-e2e.test.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@agentpond/files-sdk": "^0.1.0",
+    "@agentpond/otel": "^0.1.4",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/sdk-node": "^0.221.0",
+    "@opentelemetry/sdk-trace-base": "^2.4.0",
     "better-sqlite3": "^11.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "files-sdk": "^2.2.1",
     "nanoid": "^5.0.9",
     "ws": "^8.18.0",
     "zod": "^3.24.2"

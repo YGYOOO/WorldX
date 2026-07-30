@@ -288,6 +288,25 @@ npm run create       # 通过命令行直接生成新世界
 - 客户端：`http://localhost:3200`
 - 服务器：`http://localhost:3100`
 
+### 可选的 AgentPond 追踪
+
+服务端可将世界模拟中的 LLM 调用元数据导出到
+[AgentPond](https://github.com/marcusschiesser/agentpond)。追踪默认关闭，并且不会记录
+prompt、回复、API Key 或工具 payload。
+
+本地验证可使用 Files SDK 的文件系统存储：
+
+```bash
+npx agentpond env init local --provider fs --root "$PWD/.agentpond/envs/local/objects"
+npx agentpond env use local
+eval "$(npx agentpond env get local)"
+AGENTPOND_ENABLED=true npm run dev
+```
+
+运行一次模拟后，使用 `npx agentpond sync` 和
+`npx agentpond traces list --limit 10` 查看追踪。生产环境请根据
+[Files SDK provider catalog](https://files-sdk.dev/docs/providers) 配置持久对象存储。
+
 ## 交流群
 <img src="docs/qq_group.jpg" width="200px"/>
 
@@ -297,4 +316,3 @@ npm run create       # 通过命令行直接生成新世界
 
 ## License
 MIT
-

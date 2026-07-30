@@ -10,6 +10,7 @@ import {
   parsePossiblyMalformedJSON,
   type StructuredOutputMode,
 } from "./structured-output.js";
+import { withAgentPondLLMSpan } from "../telemetry/agentpond.js";
 
 const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
 const NETWORK_RETRY_DELAY_MS = 1_000;
@@ -41,8 +42,26 @@ export class LLMClient {
     schema: ZodSchema<T>;
     options: LLMCallOptions;
   }): Promise<LLMCallResult<T>> {
-    const { schema, options } = params;
+    const { options } = params;
     const model = this.resolveModel(options);
+    return withAgentPondLLMSpan(
+      {
+        model,
+        taskType: options.taskType,
+      },
+      () => this.executeCall(params, model),
+    );
+  }
+
+  private async executeCall<T>(
+    params: {
+      messages: Message[];
+      schema: ZodSchema<T>;
+      options: LLMCallOptions;
+    },
+    model: string,
+  ): Promise<LLMCallResult<T>> {
+    const { schema, options } = params;
     const maxRetries = options.maxRetries ?? 2;
     const messages = [...params.messages];
     const structuredOutputMode = resolveStructuredOutputMode(

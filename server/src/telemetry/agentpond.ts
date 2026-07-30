@@ -13,6 +13,8 @@ const tracer = trace.getTracer("worldx-server");
 let sdk: NodeSDK | undefined;
 let processor: BatchSpanProcessor | undefined;
 let initialization: Promise<boolean> | undefined;
+let shutdownHandlersRegistered = false;
+let shuttingDown = false;
 
 type LLMSpanContext = {
   model: string;
@@ -37,6 +39,7 @@ async function initializeAgentPond(): Promise<boolean> {
       process.once("beforeExit", () => {
         void shutdownAgentPond();
       });
+      registerShutdownHandlers();
       return true;
     } catch (error) {
       console.warn(
@@ -80,12 +83,10 @@ export async function withAgentPondLLMSpan<T>(
         span.setStatus({ code: SpanStatusCode.OK });
         return result;
       } catch (error) {
-        const exception =
-          error instanceof Error ? error : new Error(String(error));
-        span.recordException(exception);
+        span.setAttribute("error.type", "LLMOperationError");
         span.setStatus({
           code: SpanStatusCode.ERROR,
-          message: exception.message,
+          message: "LLM operation failed",
         });
         throw error;
       } finally {
@@ -105,5 +106,28 @@ export async function shutdownAgentPond(): Promise<void> {
   processor = undefined;
   if (activeSdk) {
     await activeSdk.shutdown();
+  }
+}
+
+function registerShutdownHandlers(): void {
+  if (shutdownHandlersRegistered) {
+    return;
+  }
+  shutdownHandlersRegistered = true;
+
+  for (const signal of ["SIGINT", "SIGTERM"] as const) {
+    process.once(signal, () => {
+      if (shuttingDown) {
+        return;
+      }
+      shuttingDown = true;
+      void shutdownAgentPond()
+        .catch((error) => {
+          console.warn("[AgentPond] Failed to flush traces during shutdown.", error);
+        })
+        .finally(() => {
+          process.kill(process.pid, signal);
+        });
+    });
   }
 }

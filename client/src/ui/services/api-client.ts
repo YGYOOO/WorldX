@@ -59,6 +59,14 @@ function patchJSON<T>(path: string, body?: unknown): Promise<T> {
   });
 }
 
+function putJSON<T>(path: string, body?: unknown): Promise<T> {
+  return requestJSON(path, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+}
+
 export interface WorldInfo {
   worldName: string;
   worldDescription: string;
@@ -125,7 +133,63 @@ export class JobConflictError extends Error {
   }
 }
 
+export interface EditorCharacter {
+  id: string;
+  name: string;
+  role?: string;
+  nickname?: string;
+  appearanceHint?: string;
+  startPosition?: string;
+  coreMotivation?: string;
+  speakingStyle?: string;
+  [key: string]: unknown;
+}
+
+export interface EditorObject {
+  id?: number;
+  name?: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  properties?: Array<{ name: string; value: unknown }>;
+}
+
+export interface EditorState {
+  tmj: { width: number; height: number; tileSize: number; collision: number[]; interactiveObjects: EditorObject[] };
+  world: { locations?: Array<{ id: string; name: string; objects?: unknown[] }> };
+  characters: EditorCharacter[];
+}
+
 export const apiClient = {
+  getEditorState(): Promise<EditorState> {
+    return fetchJSON("/editor/state");
+  },
+
+  saveWalkability(grid: number[]): Promise<{ ok: boolean }> {
+    return putJSON("/editor/walkability", { grid });
+  },
+
+  saveEditorObjects(objects: Array<Record<string, unknown>>): Promise<{ ok: boolean; count: number }> {
+    return putJSON("/editor/objects", { objects });
+  },
+
+  createEditorCharacter(character: Record<string, unknown>): Promise<{ ok: boolean; character: EditorCharacter }> {
+    return postJSON("/editor/characters", { character });
+  },
+
+  updateEditorCharacter(id: string, character: Record<string, unknown>): Promise<{ ok: boolean; character: EditorCharacter }> {
+    return putJSON(`/editor/characters/${encodeURIComponent(id)}`, { character });
+  },
+
+  deleteEditorCharacter(id: string): Promise<{ ok: boolean }> {
+    return deleteJSON(`/editor/characters/${encodeURIComponent(id)}`);
+  },
+
+  regenerateEditorCharacterSprite(id: string, extraPrompt?: string): Promise<{ ok: boolean }> {
+    return postJSON(`/editor/characters/${encodeURIComponent(id)}/regenerate-sprite`, { extraPrompt });
+  },
+
   getWorldTime(): Promise<WorldTimeInfo> {
     return fetchJSON("/world/time");
   },

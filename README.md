@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <img src="https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white" alt="Node.js 18+">
+  <img src="https://img.shields.io/badge/Node.js-22.13%2B-339933?logo=node.js&logoColor=white" alt="Node.js 22.13+">
   <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19">
   <img src="https://img.shields.io/badge/Phaser-3-cdf0e8?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiAyMmgyMEwxMiAyeiIgZmlsbD0iIzMzMyIvPjwvc3ZnPg==" alt="Phaser 3">
@@ -71,7 +71,7 @@ AI 角色们会在这个世界里自主生活：他们做决策、与场景交�
 
 ### 前置条件
 
-- **Node.js 18+**
+- **Node.js 22.13+**（推荐 24 LTS）—— 数据库使用 Node 内置 SQLite（`node:sqlite`），安装依赖无需编译任何原生模块。22.5 ~ 22.12 不可用：那期间 `node:sqlite` 仍在 `--experimental-sqlite` 标志之后
 - **API Key** —— 详见下方 [模型配置](#模型配置)
 
 ### 方式 A：快速运行

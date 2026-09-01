@@ -13,7 +13,7 @@
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <img src="https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white" alt="Node.js 18+">
+  <img src="https://img.shields.io/badge/Node.js-22.13%2B-339933?logo=node.js&logoColor=white" alt="Node.js 22.13+">
   <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19">
   <img src="https://img.shields.io/badge/Phaser-3-cdf0e8?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiAyMmgyMEwxMiAyeiIgZmlsbD0iIzMzMyIvPjwvc3ZnPg==" alt="Phaser 3">
@@ -116,7 +116,7 @@ That's all it takes. WorldX handles the rest.
 
 ### Prerequisites
 
-- **Node.js 18+**
+- **Node.js 22.13+** (24 LTS recommended) — the database uses Node's built-in SQLite (`node:sqlite`), so installing dependencies requires no native module compilation. The full supported range is `>=22.13 <23 || >=23.4`: 22.5–22.12 and 23.0–23.3 will not work, as `node:sqlite` was still behind the `--experimental-sqlite` flag on those versions
 - **API keys** — see [Model Configuration](#model-configuration) below
 
 ### Option A: Preview Mode (fastest)

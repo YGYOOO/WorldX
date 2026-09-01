@@ -22,5 +22,8 @@
   "devDependencies": {
     "tsx": "^4.21.0",
     "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=22.13 <23 || >=23.4"
   }
 }

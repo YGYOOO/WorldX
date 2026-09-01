@@ -116,7 +116,7 @@ That's all it takes. WorldX handles the rest.
 
 ### Prerequisites
 
-- **Node.js 22.13+** (24 LTS recommended) — the database uses Node's built-in SQLite (`node:sqlite`), so installing dependencies requires no native module compilation. 22.5–22.12 will not work: `node:sqlite` was still behind the `--experimental-sqlite` flag on those versions
+- **Node.js 22.13+** (24 LTS recommended) — the database uses Node's built-in SQLite (`node:sqlite`), so installing dependencies requires no native module compilation. The full supported range is `>=22.13 <23 || >=23.4`: 22.5–22.12 and 23.0–23.3 will not work, as `node:sqlite` was still behind the `--experimental-sqlite` flag on those versions
 - **API keys** — see [Model Configuration](#model-configuration) below
 
 ### Option A: Preview Mode (fastest)

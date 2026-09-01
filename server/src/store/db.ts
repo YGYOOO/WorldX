@@ -36,7 +36,7 @@ function assertSqliteSupported(): void {
   if (!supported) {
     throw new Error(
       `[WorldX] 当前 Node.js 版本为 ${process.versions.node}，但内置 node:sqlite 需要 ` +
-        `Node.js 22.13+（或 24 LTS，推荐）。22.5 ~ 22.12 期间该模块仍在 ` +
+        `>=22.13 <23 || >=23.4（推荐 24 LTS）。22.5 ~ 22.12 与 23.0 ~ 23.3 期间该模块仍在 ` +
         `--experimental-sqlite 标志之后，无法使用。请升级 Node.js 后重试。`,
     );
   }
@@ -112,10 +112,10 @@ class SqliteDatabase implements WorldXDatabase {
 
   constructor(dbPath: string) {
     const { DatabaseSync } = loadSqlite();
-    // enableForeignKeyConstraints 显式置为 false：node:sqlite 默认开启，而
-    // better-sqlite3 默认关闭。这里保持迁移前的行为，避免旧快照（其
-    // content_candidates.event_id 可能指向已裁剪的事件）在写入时被外键拒绝。
-    this.inner = new DatabaseSync(dbPath, { enableForeignKeyConstraints: false });
+    // 显式开启外键校验：两个引擎默认都是开（better-sqlite3 编译期带
+    // SQLITE_DEFAULT_FOREIGN_KEYS=1，node:sqlite 同样默认开启）。写成显式值是为了
+    // 不受上游默认值变动影响 —— 一旦静默关掉，带外键的库会开始接受孤儿记录。
+    this.inner = new DatabaseSync(dbPath, { enableForeignKeyConstraints: true });
     // better-sqlite3 默认 5 秒 busy timeout，node:sqlite 默认 0。不设置的话，
     // WAL 下任何第二个连接（tsx watch 重启、快照/分支拷贝）都会立刻 SQLITE_BUSY。
     // 构造函数的 timeout 选项要 Node >= 24，PRAGMA 才是可移植写法。
@@ -152,9 +152,8 @@ class SqliteDatabase implements WorldXDatabase {
       this.inner.exec(nested ? `SAVEPOINT ${savepoint}` : "BEGIN");
       this.txDepth += 1;
 
-      let result: TResult;
       try {
-        result = fn(...args);
+        const result = fn(...args);
         // better-sqlite3 会拒绝返回 promise 的事务函数：否则 COMMIT 会在异步工作
         // 真正执行前就跑完，写入落在事务之外且毫无原子性。
         if (result instanceof Promise) {
@@ -163,20 +162,26 @@ class SqliteDatabase implements WorldXDatabase {
               "导致写入脱离事务。请改用同步函数。",
           );
         }
+        // 提交必须在受保护路径内：延迟外键约束、WAL 下的 SQLITE_BUSY 都可能让提交
+        // 本身失败，而失败后事务仍然活动。不回滚的话，下一次调用会直接撞上
+        // "cannot start a transaction within a transaction"。
+        this.inner.exec(nested ? `RELEASE ${savepoint}` : "COMMIT");
+        return result;
       } catch (err) {
-        this.txDepth -= 1;
         try {
           this.inner.exec(nested ? `ROLLBACK TO ${savepoint}` : "ROLLBACK");
           if (nested) this.inner.exec(`RELEASE ${savepoint}`);
         } catch {
-          // 回滚失败时仍抛出原始错误
+          // 事务可能已被 SQLite 自动回滚，此时 ROLLBACK 会报 "no transaction is
+          // active"。这种情况下原始错误信息更有价值，吞掉回滚错误。
         }
         throw err;
+      } finally {
+        // 无论提交成功、提交失败还是回滚失败，深度都只减一次：放在 finally 才能
+        // 保证提交路径抛错时不会漏减，否则 txDepth 会一路虚高并把后续事务全部
+        // 误判成嵌套。
+        this.txDepth -= 1;
       }
-
-      this.txDepth -= 1;
-      this.inner.exec(nested ? `RELEASE ${savepoint}` : "COMMIT");
-      return result;
     };
   }
 
@@ -334,6 +339,14 @@ export function initDatabase(dbPath?: string): WorldXDatabase {
         `[WorldX] journal_mode 未能切换到 WAL（当前为 ${mode ?? "unknown"}）。` +
           `数据库仍可使用，但并发读写与快照一致性会变差，常见原因是数据目录位于网络文件系统或只读。`,
       );
+    } else {
+      // better-sqlite3 编译期带 SQLITE_DEFAULT_WAL_SYNCHRONOUS=1，WAL 下拿到的是
+      // NORMAL；node:sqlite 用的是上游默认的 FULL。WAL + FULL 会在每次事务提交后
+      // 额外同步一次 WAL，而本项目大量状态写入都是独立 .run()（各自隐式成事务），
+      // 不改回 NORMAL 会形成持续的写盘性能回退。
+      // synchronous 是连接级设置、不会持久化到库文件，所以每次打开都要重设；
+      // 仅在 WAL 生效时才降级，回退到 delete/truncate 时保留 FULL 的持久性。
+      database.pragma("synchronous = NORMAL");
     }
 
     database.exec(SCHEMA_SQL);

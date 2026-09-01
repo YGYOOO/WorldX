@@ -71,7 +71,7 @@ AI 角色们会在这个世界里自主生活：他们做决策、与场景交�
 
 ### 前置条件
 
-- **Node.js 22.13+**（推荐 24 LTS）—— 数据库使用 Node 内置 SQLite（`node:sqlite`），安装依赖无需编译任何原生模块。22.5 ~ 22.12 不可用：那期间 `node:sqlite` 仍在 `--experimental-sqlite` 标志之后
+- **Node.js 22.13+**（推荐 24 LTS）—— 数据库使用 Node 内置 SQLite（`node:sqlite`），安装依赖无需编译任何原生模块。完整可用区间是 `>=22.13 <23 || >=23.4`：22.5 ~ 22.12 与 23.0 ~ 23.3 不可用，那期间 `node:sqlite` 仍在 `--experimental-sqlite` 标志之后
 - **API Key** —— 详见下方 [模型配置](#模型配置)
 
 ### 方式 A：快速运行

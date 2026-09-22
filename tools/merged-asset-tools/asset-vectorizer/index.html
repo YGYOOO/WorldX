@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>素材矢量分离器</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="./lucide-lite.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <div>
+            <h1>素材矢量分离器</h1>
+            <p id="imageMeta">等待载入图片</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <label class="file-button">
+            <i data-lucide="image-plus"></i>
+            <span>上传图片</span>
+            <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" />
+          </label>
+          <button id="sampleBtn" type="button" class="ghost-button">
+            <i data-lucide="sparkles"></i>
+            <span>载入示例</span>
+          </button>
+          <button id="analyzeBtn" type="button" class="primary-button">
+            <i data-lucide="scan-line"></i>
+            <span>重新分离</span>
+          </button>
+          <button
+            id="splitBtn"
+            type="button"
+            class="ghost-button"
+            title="将选中素材拆成独立元素"
+            disabled
+          >
+            <i data-lucide="ungroup"></i>
+            <span>拆分元素</span>
+          </button>
+          <button id="zipBtn" type="button" class="dark-button" disabled>
+            <i data-lucide="download"></i>
+            <span>全部 PNG</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="control-panel">
+          <section>
+            <div class="section-head">
+              <div class="section-title">
+                <h2>智能抠图</h2>
+                <span class="feature-chip">本地处理</span>
+              </div>
+              <button id="pickBgBtn" type="button" class="icon-button" title="取背景色" aria-label="取背景色">
+                <i data-lucide="pipette"></i>
+              </button>
+            </div>
+            <div class="bg-row">
+              <span id="bgSwatch" class="bg-swatch"></span>
+              <span id="bgText">#ffffff</span>
+            </div>
+            <label class="range-row">
+              <span>背景容差</span>
+              <output id="toleranceOut">32</output>
+              <input id="tolerance" type="range" min="4" max="90" value="32" />
+            </label>
+            <label class="range-row">
+              <span>边缘清理</span>
+              <output id="edgeTrimOut">1 px</output>
+              <input id="edgeTrim" type="range" min="0" max="4" value="1" />
+            </label>
+            <label class="range-row">
+              <span>边缘压色</span>
+              <output id="innerStrokeOut">40%</output>
+              <input id="innerStroke" type="range" min="0" max="100" step="5" value="40" />
+            </label>
+            <label class="check-row">
+              <span>
+                <strong>清理封闭背景</strong>
+                <small>移除轮廓内部残留的背景色</small>
+              </span>
+              <input id="removeEnclosed" type="checkbox" checked />
+            </label>
+            <label class="range-row">
+              <span>合并间距</span>
+              <output id="mergeGapOut">8 px</output>
+              <input id="mergeGap" type="range" min="0" max="36" value="8" />
+            </label>
+            <label class="range-row">
+              <span>最小面积</span>
+              <output id="minAreaOut">120</output>
+              <input id="minArea" type="range" min="12" max="2000" step="4" value="120" />
+            </label>
+          </section>
+
+          <section>
+            <div class="section-head">
+              <h2>清晰度</h2>
+            </div>
+            <label class="range-row">
+              <span>边距</span>
+              <output id="paddingOut">12 px</output>
+              <input id="padding" type="range" min="0" max="48" value="12" />
+            </label>
+            <label class="range-row">
+              <span>放大倍率</span>
+              <output id="scaleOut">2x</output>
+              <input id="scale" type="range" min="1" max="4" step="1" value="2" />
+            </label>
+            <label class="range-row">
+              <span>锐化</span>
+              <output id="sharpnessOut">22%</output>
+              <input id="sharpness" type="range" min="0" max="100" value="22" />
+            </label>
+            <label class="range-row">
+              <span>边缘柔化</span>
+              <output id="featherOut">0 px</output>
+              <input id="feather" type="range" min="0" max="6" value="0" />
+            </label>
+          </section>
+
+          <section>
+            <div class="section-head">
+              <h2>导出</h2>
+            </div>
+            <label class="select-row">
+              <span>SVG 模式</span>
+              <select id="exportMode">
+                <option value="color">保留颜色</option>
+                <option value="silhouette">纯剪影</option>
+              </select>
+            </label>
+            <div class="stat-grid">
+              <div>
+                <strong id="assetCount">0</strong>
+                <span>素材</span>
+              </div>
+              <div>
+                <strong id="processTime">0 ms</strong>
+                <span>耗时</span>
+              </div>
+            </div>
+          </section>
+        </aside>
+
+        <section class="preview-area">
+          <div class="canvas-stage" id="dropZone">
+            <canvas id="previewCanvas"></canvas>
+            <div id="emptyState" class="empty-state">
+              <i data-lucide="image"></i>
+              <span>载入图片</span>
+            </div>
+          </div>
+          <div class="statusbar">
+            <span id="statusText">准备就绪</span>
+            <span id="selectedText">未选择素材</span>
+          </div>
+        </section>
+
+        <aside class="asset-panel">
+          <div class="asset-head">
+            <h2>分离结果</h2>
+            <button id="clearBtn" type="button" class="icon-button" title="清空" aria-label="清空">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+          <div id="assetList" class="asset-list"></div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>

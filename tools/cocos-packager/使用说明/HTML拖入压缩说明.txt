@@ -1,0 +1,21 @@
+HTML 拖入压缩
+================
+
+1. 将 Cocos 导出的 HTML 文件拖到 compress-html-5mb.bat 上。
+2. 工具会在原 HTML 所在目录生成：
+   - 原文件名-5mb.html
+   - 原文件名-5mb.zip
+   - 原文件名-5mb-landscape.zip
+   - 原文件名-5mb-portrait.zip
+3. 原始 HTML 不会被覆盖。
+
+输入要求
+--------
+
+HTML 内需要包含 Cocos 导出常见的 window.__zip 内嵌资源包。
+如果 HTML 不是这种格式，工具会提示 Cannot find window.__zip。
+
+GIF 序列帧工具
+==============
+
+双击 打开-GIF序列帧工具.bat，可打开 GIF / MP4 / PNG 序列转 Cocos 工具。

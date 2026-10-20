@@ -19,6 +19,23 @@ export function isSimulationBusy(): boolean {
   return activeSimulationTicks > 0;
 }
 
+let worldEditing = false;
+
+export function beginWorldEdit(): (() => void) | null {
+  if (worldEditing) return null;
+  worldEditing = true;
+  let finished = false;
+  return () => {
+    if (finished) return;
+    finished = true;
+    worldEditing = false;
+  };
+}
+
+export function isWorldEditing(): boolean {
+  return worldEditing;
+}
+
 export function getSimulationBusyMessage(): string {
   return "Simulation tick is still finishing. Please wait until the world is fully paused.";
 }

@@ -18,6 +18,7 @@ import simulationRoutes from "./api/routes/simulation.js";
 import godRoutes from "./api/routes/god.js";
 import sandboxChatRoutes from "./api/routes/sandbox-chat.js";
 import timelineRoutes from "./api/routes/timeline.js";
+import editorRoutes from "./api/routes/editor.js";
 import { resolveInitialWorldDir } from "./utils/world-directories.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -60,7 +61,8 @@ function createWorldAssetHandler(assetDirName: "map" | "characters"): express.Re
 async function main() {
   const app = express();
   app.use(cors());
-  app.use(express.json());
+  // A 256x256 walkability grid exceeds Express's default 100kb JSON limit.
+  app.use(express.json({ limit: "2mb" }));
 
   const worldDir = resolveInitialWorldDir();
   if (worldDir) {
@@ -106,6 +108,7 @@ async function main() {
   app.use("/api/god", requireWorld, godRoutes);
   app.use("/api/sandbox/chat", requireWorld, sandboxChatRoutes);
   app.use("/api/timelines", timelineRoutes);
+  app.use("/api/editor", requireWorld, editorRoutes);
 
   app.use("/assets/map", createWorldAssetHandler("map"));
   app.use("/assets/characters", createWorldAssetHandler("characters"));

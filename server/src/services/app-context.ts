@@ -28,6 +28,7 @@ export class AppContext {
   private sceneConfigOverride: Partial<SceneConfig> | null = null;
   private _initialized = false;
   private tickEventsHandlerRegistered = false;
+  private worldRevision = 0;
 
   async initialize(worldDirPath?: string): Promise<void> {
     this.worldDirPath = worldDirPath;
@@ -53,6 +54,14 @@ export class AppContext {
 
   getWorldDir(): string | undefined {
     return this.worldDirPath;
+  }
+
+  getWorldRevision(): number {
+    return this.worldRevision;
+  }
+
+  markWorldEdited(): void {
+    this.worldRevision += 1;
   }
 
   switchWorld(worldDirPath: string): void {

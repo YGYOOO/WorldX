@@ -9,6 +9,7 @@ import type { WorldInfo, GeneratedWorldSummary } from "../services/api-client";
 import { GodPanel } from "./GodPanel";
 import { SandboxChatPanel } from "./SandboxChatPanel";
 import { TimelineManagerModal } from "./TimelineManagerModal";
+import { WorldEditorModal } from "./WorldEditorModal";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { translatePeriod } from "../utils/time-i18n";
 import { sortLibraryWorldsForLocale } from "../utils/library-world-sort";
@@ -66,6 +67,7 @@ export function TopBar({
   const [isSwitchingWorld, setIsSwitchingWorld] = useState(false);
   const [godPanelOpen, setGodPanelOpen] = useState(false);
   const [sandboxChatOpen, setSandboxChatOpen] = useState(false);
+  const [worldEditorOpen, setWorldEditorOpen] = useState(false);
   const [showPauseToast, setShowPauseToast] = useState(false);
   const [isChangingTickGranularity, setIsChangingTickGranularity] = useState(false);
   const [managerModalOpen, setManagerModalOpen] = useState(false);
@@ -470,6 +472,7 @@ export function TopBar({
         {/* Right: feature entries + tools */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
           <button onClick={() => navigate("/timeline")} style={chipBtnStyle(false)}>{t("topbar.eventLog")}</button>
+          <button onClick={() => { pauseWorldIfNeeded(); setWorldEditorOpen(true); }} style={chipBtnStyle(worldEditorOpen)}>World Editor</button>
           <button
             onClick={() => setGodPanelOpen(true)}
             disabled={inReplayMode}
@@ -559,6 +562,9 @@ export function TopBar({
         : null}
       {managerModalOpen && typeof document !== "undefined"
         ? createPortal(<TimelineManagerModal onClose={() => setManagerModalOpen(false)} />, document.body)
+        : null}
+      {worldEditorOpen && typeof document !== "undefined"
+        ? createPortal(<WorldEditorModal onClose={() => setWorldEditorOpen(false)} />, document.body)
         : null}
     </div>
   );

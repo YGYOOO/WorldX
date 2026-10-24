@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>序列帧动画</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="toolbar" aria-label="GIF to Cocos">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 28 28">
+              <path d="M5 8.5h11.8c3.5 0 6.2 2.7 6.2 6.1 0 3.5-2.7 6.2-6.2 6.2H5V8.5Z" />
+              <path d="M9 12.4h7.3a2.2 2.2 0 1 1 0 4.4H9v-4.4Z" />
+            </svg>
+          </div>
+          <div>
+            <h1>序列帧动画</h1>
+            <p id="supportLine">Chrome / Edge 本地处理 GIF、MP4 和 PNG 序列</p>
+          </div>
+        </div>
+        <div class="download-actions">
+          <button id="downloadBtn" class="primary-action" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5" />
+              <path d="M5 20h14" />
+            </svg>
+            下载 Cocos
+          </button>
+          <button id="downloadSequenceBtn" class="outline-action" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5" />
+              <path d="M5 20h14" />
+            </svg>
+            下载序列帧
+          </button>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <section class="panel drop-panel" aria-label="输入 GIF、MP4 或 PNG 序列">
+          <label id="dropZone" class="drop-zone" for="gifInput">
+            <input id="gifInput" type="file" accept="image/gif,.gif,video/mp4,.mp4,image/png,.png" multiple />
+            <span class="drop-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 4v11" />
+                <path d="M8 8l4-4 4 4" />
+                <path d="M5 16.5V20h14v-3.5" />
+              </svg>
+            </span>
+            <span class="drop-title">拖入 GIF、MP4 或 PNG 序列</span>
+            <span id="fileName" class="drop-meta">未选择文件</span>
+          </label>
+
+          <label class="png-folder-action" for="pngFolderInput">
+            <input id="pngFolderInput" type="file" accept="image/png,.png" multiple webkitdirectory directory />
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 6.5h7l2 2h9v9.5H3z" />
+            </svg>
+            <span>选择 PNG 序列文件夹</span>
+          </label>
+
+          <div class="settings-grid">
+            <label>
+              <span>资源目录</span>
+              <input id="folderInput" type="text" value="Dog" spellcheck="false" />
+            </label>
+            <label>
+              <span>动画名</span>
+              <input id="clipInput" type="text" value="dog_idle" spellcheck="false" />
+            </label>
+            <label>
+              <span>宽</span>
+              <input id="widthInput" type="number" min="1" max="4096" value="664" />
+            </label>
+            <label>
+              <span>高</span>
+              <input id="heightInput" type="number" min="1" max="4096" value="688" />
+            </label>
+            <label>
+              <span>自动裁剪</span>
+              <select id="autoCropSelect">
+                <option value="on" selected>开启</option>
+                <option value="off">关闭</option>
+              </select>
+            </label>
+            <label>
+              <span>裁剪边距</span>
+              <input id="cropPaddingInput" type="number" min="0" max="512" value="12" />
+            </label>
+            <label>
+              <span>适配</span>
+              <select id="fitSelect">
+                <option value="contain" selected>等比完整</option>
+                <option value="cover">等比填满</option>
+                <option value="stretch">拉伸</option>
+              </select>
+            </label>
+            <label>
+              <span>播放</span>
+              <select id="loopSelect">
+                <option value="loop" selected>循环</option>
+                <option value="normal">单次</option>
+              </select>
+            </label>
+            <label>
+              <span>透明区（GIF）</span>
+              <select id="alphaSelect">
+                <option value="first-frame" selected>锁定首帧</option>
+                <option value="gif">原始 GIF</option>
+              </select>
+            </label>
+            <label>
+              <span>MP4 抽帧 FPS</span>
+              <input id="frameRateInput" type="number" min="1" max="60" value="12" />
+            </label>
+            <label>
+              <span>PNG 序列 FPS</span>
+              <input id="pngFrameRateInput" type="number" min="1" max="60" value="30" />
+            </label>
+          </div>
+
+          <button id="convertBtn" class="secondary-action" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h11a4 4 0 0 1 4 4v1" />
+              <path d="M16 9l3 3 3-3" />
+              <path d="M20 17H9a4 4 0 0 1-4-4v-1" />
+              <path d="M8 15l-3-3-3 3" />
+            </svg>
+            重新生成
+          </button>
+        </section>
+
+        <section class="panel preview-panel" aria-label="预览">
+          <div class="preview-head">
+            <div>
+              <h2>Sprite 预览</h2>
+              <p id="statusText">等待 GIF、MP4 或 PNG 序列</p>
+            </div>
+            <div id="progressText" class="progress-text">0%</div>
+          </div>
+
+          <div class="preview-stage">
+            <canvas id="previewCanvas" width="664" height="688"></canvas>
+          </div>
+
+          <div class="scrubber">
+            <input id="frameRange" type="range" min="0" max="0" value="0" disabled />
+            <span id="frameText">0 / 0</span>
+          </div>
+
+          <div id="filmStrip" class="film-strip" aria-label="帧缩略图"></div>
+        </section>
+
+        <section class="panel output-panel" aria-label="输出">
+          <div class="metrics">
+            <div>
+              <span>源尺寸</span>
+              <strong id="sourceSize">-</strong>
+            </div>
+            <div>
+              <span>输出尺寸</span>
+              <strong id="outputSize">664x688</strong>
+            </div>
+            <div>
+              <span>帧数</span>
+              <strong id="frameCount">0</strong>
+            </div>
+            <div>
+              <span>时长</span>
+              <strong id="durationText">0.00s</strong>
+            </div>
+            <div>
+              <span>源文件大小</span>
+              <strong id="sourceBytes">-</strong>
+            </div>
+            <div>
+              <span>Cocos 大小</span>
+              <strong id="cocosBytes">-</strong>
+            </div>
+          </div>
+
+          <div class="tree-box" aria-label="Cocos 资源结构">
+            <div class="tree-row folder">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h7l2 2h9v9.5H3z" /></svg>
+              <span id="treeFolder">Dog</span>
+            </div>
+            <div class="tree-row">
+              <span></span><span id="treeAnim">dog_idle.anim</span>
+            </div>
+            <div class="tree-row">
+              <span></span><span id="treeAnimMeta">dog_idle.anim.meta</span>
+            </div>
+            <div class="tree-row folder nested">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h7l2 2h9v9.5H3z" /></svg>
+              <span id="treeClipFolder">dog_idle</span>
+            </div>
+            <div class="tree-row nested">
+              <span></span><span id="treeFrame">dog_idle_000.png</span>
+            </div>
+            <div class="tree-row nested">
+              <span></span><span id="treeFrameMeta">dog_idle_000.png.meta</span>
+            </div>
+          </div>
+
+          <div id="messageBox" class="message-box">浏览器内完成转换，不上传文件。</div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片自动压缩</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="toolbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 3v5H3M3 8l6-6M16 21v-5h5m0 0-6 6M16 3v5h5m0 0-6-6M8 21v-5H3m0 0 6 6" />
+            </svg>
+          </div>
+          <div>
+            <h1>图片自动压缩</h1>
+            <p>PNG 深度无损，JPG / WebP 画面优先；保持原始尺寸，本地处理。</p>
+          </div>
+        </div>
+        <button id="downloadAllBtn" class="primary-action" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M5 20h14" />
+          </svg>
+          下载全部 ZIP
+        </button>
+      </header>
+
+      <section class="workspace">
+        <aside class="panel control-panel">
+          <label id="dropZone" class="drop-zone" for="fileInput">
+            <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" multiple />
+            <span class="drop-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 4v11m-4-7 4-4 4 4M5 16.5V20h14v-3.5" /></svg>
+            </span>
+            <strong>拖入图片，立即自动压缩</strong>
+            <span>支持批量 PNG、JPG、JPEG、WebP</span>
+          </label>
+
+          <div class="settings">
+            <label>
+              <span>输出格式</span>
+              <select id="formatSelect">
+                <option value="original" selected>保持原格式</option>
+                <option value="webp">优先转 WebP（更小时）</option>
+              </select>
+            </label>
+            <label>
+              <span>照片画质 <output id="qualityOutput">92%</output></span>
+              <input id="qualityInput" type="range" min="70" max="100" value="92" />
+            </label>
+          </div>
+
+          <div class="hint-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.4 2.8 8.2 7 9.8 4.2-1.6 7-5.4 7-9.8V6zM9 12l2 2 4-4" /></svg>
+            <p>PNG 自动尝试调色板与多种滤波深度压缩；新结果若没有更小才保留原图。宽高与透明通道保持不变。</p>
+          </div>
+
+          <button id="clearBtn" class="secondary-action" type="button" disabled>清空列表</button>
+        </aside>
+
+        <section class="panel results-panel" aria-live="polite">
+          <div class="summary">
+            <div><span>图片</span><strong id="fileCount">0</strong></div>
+            <div><span>压缩前</span><strong id="beforeSize">0 B</strong></div>
+            <div><span>压缩后</span><strong id="afterSize">0 B</strong></div>
+            <div class="saved"><span>节省</span><strong id="savedSize">0%</strong></div>
+          </div>
+
+          <div class="results-head">
+            <div>
+              <h2>压缩结果</h2>
+              <p id="statusText">等待选择图片</p>
+            </div>
+            <span id="progressText" class="progress">0%</span>
+          </div>
+
+          <div id="emptyState" class="empty-state">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM7 15l3-3 3 3 2-2 3 3M9 9h.01" /></svg>
+            <strong>选中图片后会自动开始</strong>
+            <span>处理全程在浏览器本地完成，不上传素材。</span>
+          </div>
+          <div id="resultList" class="result-list"></div>
+        </section>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

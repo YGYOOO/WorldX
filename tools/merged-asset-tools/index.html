@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>素材工具台</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <div class="merged-shell">
+      <aside class="tool-sidebar" aria-label="素材工具台">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <path d="M7 9h9.5c4.7 0 8.5 3.8 8.5 8.5S21.2 26 16.5 26H7V9Z" />
+              <path d="M10.5 13.2h6.2a3 3 0 1 1 0 6h-6.2v-6Z" />
+              <path d="M21.8 6.2 25.5 3l3.3 3.7-3.6 3.2-3.4-3.7Z" />
+            </svg>
+          </div>
+          <div>
+            <h1>素材工具台</h1>
+            <p id="toolStatus">素材矢量分离器</p>
+          </div>
+        </div>
+
+        <nav class="tool-tabs" aria-label="工具切换">
+          <button class="tool-tab" type="button" data-tool="gif">
+            <span class="tab-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 6h16" />
+                <path d="M4 12h16" />
+                <path d="M4 18h16" />
+              </svg>
+            </span>
+            <span class="tab-copy">
+              <span class="tab-title">序列帧动画</span>
+              <span class="tab-subtitle">GIF / MP4 / PNG 转 Cocos</span>
+            </span>
+          </button>
+          <button class="tool-tab" type="button" data-tool="compress">
+            <span class="tab-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 3v5H3" />
+                <path d="m3 8 6-6" />
+                <path d="M16 21v-5h5" />
+                <path d="m21 16-6 6" />
+                <path d="M16 3v5h5" />
+                <path d="m21 8-6-6" />
+                <path d="M8 21v-5H3" />
+                <path d="m3 16 6 6" />
+              </svg>
+            </span>
+            <span class="tab-copy">
+              <span class="tab-title">图片自动压缩</span>
+              <span class="tab-subtitle">批量压缩 / 保持尺寸</span>
+            </span>
+          </button>
+          <button class="tool-tab is-active" type="button" data-tool="vector">
+            <span class="tab-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 5h6v6H4z" />
+                <path d="M14 13h6v6h-6z" />
+                <path d="M10 8c4.6.4 7.4 2.8 8 7" />
+              </svg>
+            </span>
+            <span class="tab-copy">
+              <span class="tab-title">素材矢量分离器</span>
+              <span class="tab-subtitle">抠图 / 分离 / 导出</span>
+            </span>
+          </button>
+        </nav>
+
+        <div class="sidebar-actions">
+          <button id="reloadTool" class="utility-action" type="button" title="刷新当前工具" aria-label="刷新当前工具">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 12a8 8 0 1 1-2.3-5.7" />
+              <path d="M20 4v6h-6" />
+            </svg>
+            <span>刷新</span>
+          </button>
+          <button id="openTool" class="utility-action" type="button" title="单独打开当前工具" aria-label="单独打开当前工具">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 8h8v8" />
+              <path d="M7 17 16 8" />
+              <path d="M5 5h14v14H5z" />
+            </svg>
+            <span>单独打开</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="tool-workspace">
+        <header class="workspace-header">
+          <div>
+            <h2 id="toolHeading">素材矢量分离器</h2>
+            <p id="toolDescription">载入图片后自动抠图分离素材，支持 SVG、PNG 和批量导出。</p>
+          </div>
+          <div class="status-pill" aria-label="处理方式">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 5 6v5c0 4.4 2.8 8.2 7 9.8 4.2-1.6 7-5.4 7-9.8V6z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+            <span>本地处理</span>
+          </div>
+        </header>
+
+        <section class="frame-stack" aria-live="polite">
+          <iframe
+            class="tool-frame"
+            data-tool="gif"
+            title="序列帧动画"
+            src="./gif-to-cocos-tool/index.html"
+          ></iframe>
+          <iframe
+            class="tool-frame"
+            data-tool="compress"
+            title="图片自动压缩"
+            src="./image-compressor/index.html"
+          ></iframe>
+          <iframe
+            class="tool-frame is-active"
+            data-tool="vector"
+            title="素材矢量分离器"
+            src="./asset-vectorizer/index.html"
+          ></iframe>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
